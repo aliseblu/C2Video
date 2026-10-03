@@ -42,7 +42,6 @@
 
 [自动记忆说明](../automatic-memory.md) · [用量看板说明](../usage-dashboard.md)
 
-本次采用 [context7-mcp 文档核对技能](/Users/shadowcat/.agents/skills/context7-mcp/SKILL.md)，核对了 Pydantic 严格结构校验、React 表单与异步状态、HTTPX 离线响应测试与连接关闭方法。
+本次核对了 Pydantic 严格结构校验、React 表单与异步状态、HTTPX 离线响应测试与连接关闭方法。
 
-修改前源码副本：/private/tmp/c2video-memory-backup.bhkx56。该副本不包含真实密钥文件。浏览器验收截图和隔离数据：/private/tmp/c2video-memory-usage-qa.mUS0Dt（临时目录，可能被系统清理）。
-
+修改前源码副本不包含真实密钥文件。源码副本、浏览器验收截图和隔离数据保存在本机临时目录，可能被系统清理。
