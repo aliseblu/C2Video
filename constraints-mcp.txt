@@ -7,7 +7,7 @@ httpx-sse==0.4.3
 jsonschema==4.26.0
 jsonschema-specifications==2025.9.1
 pydantic-settings==2.15.0
-pyjwt==2.15.0
+pyjwt==2.15.1
 python-multipart==0.0.32
 sse-starlette==3.4.11
 referencing==0.37.0
