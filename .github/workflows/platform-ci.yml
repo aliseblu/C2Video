@@ -48,7 +48,7 @@ jobs:
         env:
           C2VIDEO_QA_DIR: /tmp/c2video-browser-ci
         run: python scripts/verify_platform.py
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: browser-acceptance
