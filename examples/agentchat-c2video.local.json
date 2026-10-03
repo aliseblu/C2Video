@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "c2video": {
+      "type": "stdio",
+      "command": "/absolute/path/to/C2Video/.venv/bin/python",
+      "args": [
+        "-m",
+        "c2video.mcp_server"
+      ],
+      "cwd": "/absolute/path/to/C2Video",
+      "env": {
+        "C2VIDEO_MCP_API_URL": "http://127.0.0.1:8765",
+        "C2VIDEO_MCP_READ_ONLY": "false"
+      }
+    }
+  }
+}
+

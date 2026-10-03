@@ -1,0 +1,18 @@
+# Optional MCP environment, verified with Python 3.12 on 2026-10-03.
+# pip install -c constraints-mcp.txt '.[dev,mcp]'
+# Extends platform constraints; security fixes included in the release baseline.
+-c constraints-platform.txt
+mcp==1.28.1
+httpx-sse==0.4.3
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+pydantic-settings==2.15.0
+pyjwt==2.15.0
+python-multipart==0.0.32
+sse-starlette==3.4.11
+referencing==0.37.0
+rpds-py==2026.6.3
+cryptography==50.0.1
+cffi==2.1.1
+pycparser==3.0
+

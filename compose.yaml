@@ -1,0 +1,72 @@
+name: c2video
+x-runtime: &runtime
+  image: c2video:${C2VIDEO_IMAGE_TAG:-local}
+  build: .
+  env_file: ${C2VIDEO_ENV_FILE:-deploy/compose.env}
+  init: true
+  restart: unless-stopped
+  read_only: true
+  security_opt:
+    - no-new-privileges:true
+  cap_drop: [ALL]
+  tmpfs:
+    - /tmp:size=1073741824,mode=1777
+  volumes:
+    - c2video-data:/data
+  stop_grace_period: 30s
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+services:
+  api:
+    <<: *runtime
+    command: [api]
+    environment:
+      C2VIDEO_ENV: ${C2VIDEO_ENV:-production}
+      C2VIDEO_STUDIO_TOKEN: ${C2VIDEO_STUDIO_TOKEN:?Set a random Studio token in the private env file}
+      C2VIDEO_WORKER_MODE: external
+      C2VIDEO_WORKER_CONCURRENCY: ${C2VIDEO_WORKER_CONCURRENCY:-1}
+      C2VIDEO_WORK_DIR: /data/work
+      C2VIDEO_FINAL_DIR: /data/final
+    ports:
+      - "127.0.0.1:${C2VIDEO_PORT:-8765}:8765"
+    cpus: 1.0
+    mem_limit: 768m
+    pids_limit: 128
+    healthcheck:
+      test: [CMD, python, -m, c2video.deployment, health, api]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  worker:
+    <<: *runtime
+    command: [worker]
+    environment:
+      C2VIDEO_ENV: ${C2VIDEO_ENV:-production}
+      C2VIDEO_STUDIO_TOKEN: ${C2VIDEO_STUDIO_TOKEN:?Set a random Studio token in the private env file}
+      C2VIDEO_WORKER_MODE: external
+      C2VIDEO_WORKER_CONCURRENCY: ${C2VIDEO_WORKER_CONCURRENCY:-1}
+      C2VIDEO_WORK_DIR: /data/work
+      C2VIDEO_FINAL_DIR: /data/final
+    depends_on:
+      api:
+        condition: service_healthy
+    cpus: ${C2VIDEO_WORKER_CPUS:-2.0}
+    mem_limit: ${C2VIDEO_WORKER_MEMORY:-4g}
+    pids_limit: 512
+    shm_size: 1gb
+    healthcheck:
+      test: [CMD, python, -m, c2video.deployment, health, worker]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  c2video-data:
+

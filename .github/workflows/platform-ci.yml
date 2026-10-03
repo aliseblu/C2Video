@@ -1,0 +1,84 @@
+name: Release checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: checks-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      PYTHON_DOTENV_DISABLED: "1"
+      C2VIDEO_ENV: development
+      TTS_PROVIDER: edge
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: studio/package-lock.json
+      - name: Review upload boundary
+        run: python scripts/check_release.py
+      - name: Install locked dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+          python -m pip install -c constraints-mcp.txt -e '.[dev,mcp]'
+          python -m pip check
+          python -m playwright install --with-deps chromium
+          npm --prefix studio ci
+      - name: Frontend tests and production bundle
+        run: |
+          npm --prefix studio test
+          npm --prefix studio run build
+      - name: Backend and MCP regression
+        run: |
+          ruff check --no-cache c2video tests scripts/check_release.py scripts/verify_container.py scripts/verify_platform.py
+          pytest -q -rs -p no:cacheprovider
+      - name: Browser acceptance without paid providers
+        env:
+          C2VIDEO_QA_DIR: /tmp/c2video-browser-ci
+        run: python scripts/verify_platform.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-acceptance
+          path: /tmp/c2video-browser-ci/*.png
+          retention-days: 7
+  dependency-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Python public advisory check
+        run: |
+          python -m pip install 'pip-audit>=2.9,<3'
+          pip-audit --strict --no-deps --disable-pip -r constraints-mcp.txt -r requirements-runtime.txt
+      - name: Frontend public advisory check
+        run: npm --prefix studio audit --registry=https://registry.npmjs.org --audit-level=high
+  container:
+    needs: [regression, dependency-audit]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Linux image
+        run: docker build -t c2video:local .
+      - name: Authentication, media, durable queue and restore
+        run: python3 scripts/verify_container.py
+

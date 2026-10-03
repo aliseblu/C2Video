@@ -1,0 +1,59 @@
+# IDE / Editor
+.vscode/
+.claude/settings.local.json
+
+# Secrets and local machine config
+.env
+.env.mcp
+c2video.toml
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+studio/node_modules/
+studio/dist/
+studio/*.tsbuildinfo
+
+# Pipeline runtime output
+work/
+final/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Private deployment settings, local tools and generated reports
+.env.*
+!.env.example
+*.env
+!*.env.example
+.idea/
+.codex/
+.agents/
+.pytest_cache/
+.ruff_cache/
+.coverage*
+htmlcov/
+artifacts/
+evals/reports/
+docs/plans/c2video-projectproof-analysis.md
+*.log
+*.db
+*.db-shm
+*.db-wal
+*.sqlite*
+*.pem
+*.key
+*.p12
+*.docx
+*.pdf
+c2video/api/static/
+release-reports/
+
+# User-supplied credentials may exist in personal PyCharm run configurations.
+.run/

@@ -1,0 +1,40 @@
+"""Render bilingual content cards."""
+
+from pathlib import Path
+
+import typer
+
+from c2video.cli.common import die
+from c2video.pipeline.card import run_card
+
+app = typer.Typer(help="Render bilingual content cards")
+
+
+@app.callback(invoke_without_command=True)
+def card(
+    ctx: typer.Context,
+    picks: Path | None = typer.Option(
+        None,
+        "--input",
+        "-i",
+        help="Path to picks JSON from curate",
+    ),
+    output_dir: Path | None = typer.Option(
+        None,
+        "--output-dir",
+        "-o",
+        help="Directory for rendered card images",
+    ),
+    date: str | None = typer.Option(None, "--date", help="Run date YYYY-MM-DD (default: today)"),
+) -> None:
+    """Render bilingual content cards (original + Chinese translation overlay)."""
+    cfg = ctx.obj
+    try:
+        result = run_card(cfg, date=date, input_path=picks, output_dir=output_dir)
+    except Exception as exc:
+        die(f"card failed: {exc}")
+    typer.secho(
+        f"card: wrote {result['count']} PNG(s) → {result['output_dir']}",
+        fg=typer.colors.GREEN,
+    )
+

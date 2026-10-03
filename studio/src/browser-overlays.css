@@ -1,0 +1,6 @@
+/* The debugging extension can leave a second pointer over the production UI.
+   Suppress only its visual overlay; the native cursor and app controls stay usable. */
+#codex-agent-overlay-root[data-codex-agent-overlay-root] {
+  display: none !important;
+  pointer-events: none !important;
+}

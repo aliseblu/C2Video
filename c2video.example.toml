@@ -1,0 +1,81 @@
+# C2Video configuration
+# Copy this file to c2video.toml and adjust to your needs.
+# Secrets (API keys, tokens) belong in .env, NOT in this file.
+
+# Domain keywords for topic filtering (used during fetch)
+domain_keywords = ["人工智能", "大模型", "AI", "Agent"]
+
+# Candidate data source (ADR-0001 — replaceable)
+#   "public" — free RSS + Hacker News + GitHub, no account or API key
+[source]
+# 官方接口：需要本机环境变量 C2VIDEO_SOURCE_ZHIHU_ACCESS_SECRET。
+# 素材导入：改 zhihu_mode 为 "import"，或在网页新建页直接选择 JSON。
+provider = "zhihu"
+zhihu_mode = "api"
+zhihu_method = "search"
+zhihu_import_file = "work/zhihu-materials.json"
+timeout_seconds = 30
+
+[hard_filter]
+# Time window for fetching recent items (hours)
+time_window_hours = 168
+# Minimum engagement thresholds — candidates below these are dropped
+min_likes = 0
+min_shares = 0
+min_replies = 0
+views_threshold = 0
+# Drop posts older than one week (news-desk freshness)
+max_age_hours = 168
+
+[curation]
+# Number of top-scored candidates to pick per digest (~2 min at 15-20s each)
+top_n = 6
+# Gate 1: true = wait for user confirmation, false = fully automatic
+blocking_mode = true
+# Maximum candidates sent to the LLM for scoring
+max_candidates = 50
+
+[llm]
+# "local" uses transparent ranking and script rules with no key; "api" uses a model.
+provider = "local"
+# In local mode these fields remain empty. In api mode, fill an API-compatible endpoint.
+api_base_url = ""
+model = ""
+# API key: set via C2VIDEO_LLM_API_KEY env var or .env, NOT here.
+api_key = ""
+timeout_seconds = 120
+max_tokens = 4096
+temperature = 0.4
+
+# 可选费用估算：按实际服务价格填写；不填写时费用保持未知。
+# input_usd_per_million / output_usd_per_million 属于上面的 [llm] 节。
+
+[memory]
+# AI 自动整理反馈，复用 [llm] API 配置；local 规则模式不会写入新记忆。
+enabled = true
+min_confidence = 0.8
+timeout_seconds = 30
+
+[tts]
+# Provider: "edge" (free, no API key) or "api" (external service)
+provider = "edge"
+voice = "zh-CN-XiaoxiaoNeural"
+# Slight speedup is the short-video default (about +10–15%), not a defect.
+rate = "+12%"
+volume = "+0%"
+pitch = "+0Hz"
+# The fields below are only used when provider == "api"
+api_base_url = ""
+api_key = ""        # set via C2VIDEO_TTS_API_KEY env var or .env, NOT here
+api_model = ""
+api_voice = ""
+api_format = "mp3"
+api_timeout_seconds = 60
+
+# Optional bed music for unattended renders (instrumental).
+# If empty, looks for ./assets/bgm.mp3 and skips when missing.
+# bgm_path = "assets/bgm.mp3"
+
+
+
+

@@ -1,0 +1,26 @@
+[Unit]
+Description=C2Video single-host Worker supervisor
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=c2video
+Group=c2video
+WorkingDirectory=/opt/c2video
+EnvironmentFile=/etc/c2video/platform.env
+ExecStart=/opt/c2video/.venv/bin/python -m c2video.api.worker --daemon --db /var/lib/c2video/work/c2video-agent.db --work-dir /var/lib/c2video/work --concurrency 1
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=45
+KillMode=control-group
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/c2video
+Environment=PLAYWRIGHT_BROWSERS_PATH=/opt/c2video/browsers
+
+[Install]
+WantedBy=multi-user.target

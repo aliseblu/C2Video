@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "c2video": {
+      "type": "streamable_http",
+      "url": "http://127.0.0.1:8766/mcp",
+      "headers": {
+        "Authorization": "Bearer REPLACE_WITH_YOUR_PRIVATE_MCP_TOKEN"
+      }
+    }
+  }
+}

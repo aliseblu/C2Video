@@ -1,0 +1,26 @@
+[Unit]
+Description=C2Video API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=c2video
+Group=c2video
+WorkingDirectory=/opt/c2video
+EnvironmentFile=/etc/c2video/platform.env
+ExecStart=/opt/c2video/.venv/bin/python -m uvicorn c2video.api.app:app --host 127.0.0.1 --port 8765 --proxy-headers --forwarded-allow-ips 127.0.0.1
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=45
+KillMode=control-group
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/c2video
+Environment=PLAYWRIGHT_BROWSERS_PATH=/opt/c2video/browsers
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,8 @@
+# Offline test configuration. Real credentials and user config are never loaded.
+work_dir = "work"
+final_dir = "final"
+[llm]
+provider = "local"
+[tts]
+provider = "edge"
+
