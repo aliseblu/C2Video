@@ -6,7 +6,7 @@ RUN npm ci --no-audit --no-fund
 COPY studio/ ./
 RUN npm run build
 
-FROM python:3.12-slim-bookworm@sha256:54c85f3c47607a77f32adec749d3c81d1348bf25833671f512b26a9b6d778cb3 AS runtime
+FROM python:3.14-slim-bookworm@sha256:48b13b003dda20b16f9442b8475aa05fe21bf6579a8c881db92ffb4d8fd20f83 AS runtime
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PYTHON_DOTENV_DISABLED=1 \
     PLAYWRIGHT_BROWSERS_PATH=/opt/browsers C2VIDEO_ENV=production \
     C2VIDEO_WORK_DIR=/data/work C2VIDEO_FINAL_DIR=/data/final \
